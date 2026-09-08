@@ -21,7 +21,7 @@ const MODAL_COMPONENTS = {
 export default function ModalShell() {
     const { modal, closeModal } = useModal();
 
-    const Component = MODAL_COMPONENTS[modal.type!];
+    const Component = modal.type ? MODAL_COMPONENTS[modal.type] : null;
 
     // Only close if the click is directly on the overlay
     const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -33,13 +33,18 @@ export default function ModalShell() {
     return (
         <AnimatePresence>
             {modal.isOpen && Component && (
-                <motion.div onClick={handleOverlayClick} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                <motion.div onClick={handleOverlayClick} className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1, transition: { duration: 0.15 } }}
                         exit={{ opacity: 0,  transition: { duration: 0.15 } }}>
-                <div className="w-full rounded-3xl bg-white shadow-xl px-16 py-14 relative max-w-[900px]">
-                    {Component && <Component data={modal.data} />}
-                </div>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.97, y: 12 }}
+                        animate={{ opacity: 1, scale: 1, y: 0, transition: { duration: 0.2 } }}
+                        exit={{ opacity: 0, scale: 0.98, y: 8, transition: { duration: 0.15 } }}
+                        className={"w-full max-w-[700px] rounded-[50px] shadow-[inset_5px_5px_15px_rgba(255,255,255,0.30)] bg-white/40 backdrop-blur-[2px] p-6"}
+                    >
+                        <Component data={modal.data} />
+                    </motion.div>
             </motion.div>
             )}
         </AnimatePresence>
