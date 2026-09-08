@@ -32,10 +32,16 @@ export default function CreateModal() {
     };
 
     const handleLeadCreate = async () => {
+        if (!form.companyName.trim()) {
+            showToast("Company name is required", "Enter a company name", "error");
+            return false;
+        }
+
         try {
             await createLead(form);
 
             showToast("Lead created successfully", "", "success");
+            return true;
         } catch (err) {
             showToast("Failed to create lead", "", "error");
 
@@ -77,7 +83,7 @@ export default function CreateModal() {
 
                 <div className="col-span-2">
                     <Label >Company name<span className={'required'}/></Label>
-                    <Input value={form.companyName} onChange={(e) => handleInputChange("companyName", e.target.value)} placeholder="Enter company name" />
+                    <Input required value={form.companyName} onChange={(e) => handleInputChange("companyName", e.target.value)} placeholder="Enter company name" />
                 </div>
 
                 <div>
@@ -135,16 +141,18 @@ export default function CreateModal() {
             </div>
 
             <div className="flex justify-end gap-3 mt-10">
-                <Button className={'bg-primary-light! text-primary!'} onClickAction={() => {
-                    handleLeadCreate();
-                    setForm(initialForm);
+                <Button className={'bg-primary-light! text-primary!'} onClickAction={async () => {
+                    if (await handleLeadCreate()) {
+                        setForm(initialForm);
+                    }
                 }}>
                     Create & Next
                 </Button>
                 <Button onClickAction={async () => {
                     try {
-                        await handleLeadCreate();
-                        closeModal();
+                        if (await handleLeadCreate()) {
+                            closeModal();
+                        }
                     } catch (err) {
                         console.error(err);
                     }

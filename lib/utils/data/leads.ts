@@ -22,6 +22,10 @@ export async function getLeads() {
 }
 
 export async function createLead(form: any) {
+    if (typeof form?.companyName !== "string" || !form.companyName.trim()) {
+        throw new Error("Company name is required");
+    }
+
     await prisma.lead.create({
         data: {
             companyName: form.companyName,
